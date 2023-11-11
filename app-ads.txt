@@ -94,6 +94,13 @@ triplelift.com,11656,RESELLER,6c33edb13117fd86
 conversantmedia.com,100269,RESELLER,03113cd04947736d
 iqzone.com,IQ163,RESELLER
 inmobi.com,59c7922793a3477b9419f0854d1da7e9,RESELLER,83e75a7ae333ca9d
+webeyemob.com, 70174, RESELLER
+openx.com, 540679900, RESELLER, 6a698e2ec38604c6
+rixengine.com, 604523, RESELLER
+pubmatic.com, 163075, RESELLER, 5d62403b186f2ace
+Xapads.com, 163819, RESELLER
+Pubmatic.com, 162882, RESELLER, 5d62403b186f2ace
+google.com, pub-3990748024667386, RESELLER, f08c47fec0942fa0
 
 #unityads
 google.com, pub-5118780499327462, RESELLER
@@ -229,3 +236,27 @@ videoheroes.tv, 212499, RESELLER, 064bc410192443d8
 thebrave.io, 1234634, RESELLER, c25b2154543746ac
 thebrave.io, 9840732, RESELLER, c25b2154543746ac
 thebrave.io, 1234594, RESELLER, c25b2154543746ac
+152media.info, 152M324, RESELLER
+adsyield.com, 1233, DIRECT
+appnexus.com, 11924, RESELLER, f5ab79cb980f11d1
+criteo.com, B-072395, RESELLER, 9fac4a4a87c2a44f
+google.com, pub-5118780499327462, RESELLER, f08c47fec0942fa0
+improvedigital.com, 1604, RESELLER
+improvedigital.com, 2052, RESELLER
+inmobi.com, 7847fe1f9ac54b4abe609cde4011243b, RESELLER, 83e75a7ae333ca9d
+onetag.com, 7d9af0b85b5070e, DIRECT
+playwire.com, 1018531, RESELLER
+playwire.com, 1025000, RESELLER
+pubmatic.com, 162239, RESELLER, 5d62403b186f2ace
+pubmatic.com, 163319, RESELLER, 5d62403b186f2ace
+pubnative.net, 1007501, RESELLER, d641df8625486a7b
+pubnative.net, 1008770, RESELLER, d641df8625486a7b
+rubiconproject.com, 12556, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 15854, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 18202, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 18364, RESELLER, 5d62403b186f2ace
+smartclip.net, 13564, RESELLER
+themediagrid.com, FH3TKJ, RESELLER, 35d5010d7789b49d
+triplelift.com, 13883, RESELLER, 6c33edb13117fd86
+video.unrulymedia.com, 2464975885, RESELLER
+Xapads.com, 155860, RESELLER
