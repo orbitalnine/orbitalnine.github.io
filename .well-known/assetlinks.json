@@ -1,0 +1,9 @@
+[{
+   "relation": ["delegate_permission/common.handle_all_urls"],
+   "target": {
+     "namespace": "android_app",
+     "package_name": "com.orbital.brainiton",
+     "sha256_cert_fingerprints":
+     ["3D:05:2E:4F:0D:26:8E:E0:C2:95:BF:B3:4C:EF:A5:7F:11:FB:F7:CE:87:6F:06:9D:5F:21:D7:4A:21:20:EC:74"]
+   }
+}]
