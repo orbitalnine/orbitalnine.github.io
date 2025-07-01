@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Brain It On!</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .store-link { display: inline-block; margin-top: 20px; padding: 10px 20px; border-radius: 5px; background-color: #007bff; color: white; text-decoration: none; font-weight: bold; }
+  </style>
+  <script>
+    (function() {
+      // --- CONFIGURE YOUR APP STORE LINKS HERE ---
+      var iosAppStoreLink = "https://apps.apple.com/app/brain-it-on/id985367692"; // Replace with your actual App Store URL
+
+      var androidPlayStoreLink = "https://play.google.com/store/apps/details?id=com.orbital.brainiton"; // Replace with your actual Play Store URL
+      // -----------------------------------------
+
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Redirect to App Store for iOS devices
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        window.location.href = iosAppStoreLink;
+        return;
+      }
+
+      // Redirect to Play Store for Android devices
+      if (/android/i.test(userAgent)) {
+        window.location.href = androidPlayStoreLink;
+        return;
+      }
+
+      // Fallback for desktop or other OS
+      // You can either redirect to your main website or to a default app store page.
+      // Here, we'll redirect to the iOS App Store as a default.
+      window.location.href = iosAppStoreLink;
+    })();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Redirecting you to the app store...</h1>
+    <p>If you are not redirected automatically, please use the link below.</p>
+    <a id="fallback-link" href="#" class="store-link">Go to App Store</a>
+  </div>
+
+  <script>
+    // This second script block runs after the body is visible,
+    // to update the fallback link in case the redirect script fails for any reason.
+    (function() {
+        var iosAppStoreLink = "https://apps.apple.com/app/brain-it-on/id1022225885";
+        var androidPlayStoreLink = "https://play.google.com/store/apps/details?id=com.orbital.brainiton";
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        var fallbackLink = document.getElementById('fallback-link');
+
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            fallbackLink.href = iosAppStoreLink;
+            fallbackLink.innerText = "Go to the App Store";
+        } else if (/android/i.test(userAgent)) {
+            fallbackLink.href = androidPlayStoreLink;
+            fallbackLink.innerText = "Go to the Play Store";
+        } else {
+            // Default fallback link
+            fallbackLink.href = iosAppStoreLink;
+            fallbackLink.innerText = "Go to the App Store";
+        }
+    })();
+  </script>
+</body>
+</html>
