@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+  </style>
+  <script>
+    (function() {
+      var path = window.location.pathname;
+
+      // Check if the path is for a bio/deep link
+      if (path.startsWith('/bio/')) {
+        // --- CONFIGURE YOUR APP STORE LINKS HERE ---
+        var iosAppStoreLink = "https://apps.apple.com/app/brain-it-on/id985367692"; // Replace with your actual App Store URL
+        var androidPlayStoreLink = "https://play.google.com/store/apps/details?id=com.orbital.brainiton"; // Replace with your actual Play Store URL
+        // -----------------------------------------
+
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // Redirect to App Store for iOS devices
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+          window.location.href = iosAppStoreLink;
+          return;
+        }
+
+        // Redirect to Play Store for Android devices
+        if (/android/i.test(userAgent)) {
+          window.location.href = androidPlayStoreLink;
+          return;
+        }
+
+        // Fallback for desktop or other OS
+        window.location.href = iosAppStoreLink;
+        return;
+      } else {
+        window.location.href = '/';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Redirecting...</h1>
+    <p>If you are not automatically redirected, please click <a href="/">here</a>.</p>
+  </div>
+</body>
+</html>
