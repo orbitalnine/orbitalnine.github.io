@@ -1,6 +1,0 @@
-
-RewriteEngine on
-RewriteCond %{HTTP_HOST} ^brainitongame\.com$ [OR]
-RewriteCond %{HTTP_HOST} ^www\.brainitongame\.com$
-RewriteRule ^beta$ "http\:\/\/brainitongame\.com\/" [R=301,L]
-
