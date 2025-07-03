@@ -3,48 +3,144 @@
 <head>
   <meta charset="utf-8">
   <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Smart App Banner for iOS Chrome -->
+  <meta name="apple-itunes-app" content="app-id=985367692">
   <style>
     body { font-family: sans-serif; text-align: center; padding: 40px 20px; }
     .container { max-width: 600px; margin: 0 auto; }
+    .loading { margin: 20px 0; }
+    .fallback-button { 
+      display: inline-block; 
+      padding: 12px 24px; 
+      background: #007AFF; 
+      color: white; 
+      text-decoration: none; 
+      border-radius: 8px; 
+      margin: 10px; 
+    }
+    .fallback-button:hover { background: #0056CC; }
   </style>
   <script>
     (function() {
       var path = window.location.pathname;
+      var search = window.location.search;
 
-      // Check if the path is for a bio/deep link
+      // --- CONFIGURE YOUR APP STORE LINKS HERE ---
+      var iosAppStoreLink = "https://apps.apple.com/app/brain-it-on/id985367692";
+      var androidPlayStoreLink = "https://play.google.com/store/apps/details?id=com.orbital.brainiton";
+      var deepLinkScheme = "brainiton"; // Your app's URL scheme
+      // -----------------------------------------
+
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+      var isAndroid = /android/i.test(userAgent);
+      var isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+      var isChrome = /Chrome/.test(userAgent);
+
+      // Handle bio links with dynamic actions
       if (path.startsWith('/bio/')) {
-        // --- CONFIGURE YOUR APP STORE LINKS HERE ---
-        var iosAppStoreLink = "https://apps.apple.com/app/brain-it-on/id985367692"; // Replace with your actual App Store URL
-        var androidPlayStoreLink = "https://play.google.com/store/apps/details?id=com.orbital.brainiton"; // Replace with your actual Play Store URL
-        // -----------------------------------------
-
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        // Redirect to App Store for iOS devices
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-          window.location.href = iosAppStoreLink;
-          return;
+        // Extract action from path (e.g., /bio/invite -> invite)
+        var pathParts = path.split('/');
+        var action = pathParts[2] || '';
+        
+        if (action) {
+          // Construct deep link: brainiton://invite?code=123&message=hi
+          var deepLink = deepLinkScheme + '://' + action + search;
+          
+          if (isIOS) {
+            if (isSafari) {
+              // Safari - Universal Links should work, but add fallback
+              setTimeout(function() {
+                window.location.href = iosAppStoreLink;
+              }, 2000);
+            } else if (isChrome) {
+              // Chrome on iOS - multiple approaches
+              // Try iframe method first
+              var iframe = document.createElement('iframe');
+              iframe.style.display = 'none';
+              iframe.src = deepLink;
+              document.body.appendChild(iframe);
+              
+              // Try direct redirect after short delay
+              setTimeout(function() {
+                window.location.href = deepLink;
+              }, 100);
+              
+              // Fallback to App Store
+              setTimeout(function() {
+                window.location.href = iosAppStoreLink;
+              }, 2500);
+            } else {
+              // Other iOS browsers
+              window.location.href = deepLink;
+              setTimeout(function() {
+                window.location.href = iosAppStoreLink;
+              }, 2000);
+            }
+          } else if (isAndroid) {
+            // Android - try intent URL first, then deep link
+            var intentUrl = 'intent://' + action + search + '#Intent;scheme=' + deepLinkScheme + ';package=com.orbital.brainiton;S.browser_fallback_url=' + encodeURIComponent(androidPlayStoreLink) + ';end';
+            
+            window.location.href = intentUrl;
+            
+            // Fallback for browsers that don't support intent URLs
+            setTimeout(function() {
+              window.location.href = deepLink;
+            }, 100);
+            
+            setTimeout(function() {
+              window.location.href = androidPlayStoreLink;
+            }, 2000);
+          } else {
+            // Desktop or other platforms - show manual options
+            showFallbackOptions(deepLink, iosAppStoreLink, androidPlayStoreLink);
+            return;
+          }
+        } else {
+          // No action specified, redirect to app stores
+          if (isIOS) {
+            window.location.href = iosAppStoreLink;
+          } else if (isAndroid) {
+            window.location.href = androidPlayStoreLink;
+          } else {
+            window.location.href = iosAppStoreLink;
+          }
         }
-
-        // Redirect to Play Store for Android devices
-        if (/android/i.test(userAgent)) {
-          window.location.href = androidPlayStoreLink;
-          return;
-        }
-
-        // Fallback for desktop or other OS
-        window.location.href = iosAppStoreLink;
-        return;
-      } else {
+      } 
+      // Default redirect to home
+      else {
         window.location.href = '/';
+      }
+
+      function showFallbackOptions(deepLink, iosLink, androidLink) {
+        document.body.innerHTML = `
+          <div class="container">
+            <h1>Open Brain It On!</h1>
+            <p>Choose your platform:</p>
+            <div>
+              <a href="${iosLink}" class="fallback-button">Download for iOS</a>
+              <a href="${androidLink}" class="fallback-button">Download for Android</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 14px; color: #666;">
+              If you have the app installed, you can also try: 
+              <a href="${deepLink}" style="color: #007AFF;">Open in App</a>
+            </p>
+          </div>
+        `;
       }
     })();
   </script>
 </head>
 <body>
   <div class="container">
-    <h1>Redirecting...</h1>
-    <p>If you are not automatically redirected, please click <a href="/">here</a>.</p>
+    <h1>Opening Brain It On!</h1>
+    <div class="loading">
+      <p>Redirecting to the app...</p>
+      <p style="font-size: 14px; color: #666;">
+        If the app doesn't open automatically, you'll be redirected to the app store.
+      </p>
+    </div>
   </div>
 </body>
 </html>
