@@ -37,6 +37,12 @@
       var isAndroid = /android/i.test(userAgent);
       var isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
       var isChrome = /Chrome/.test(userAgent);
+      var isMessenger = /FB_IAB|FBAV|MessengerForiOS|FB4A/.test(userAgent);
+      var isInAppBrowser = /FB_IAB|FBAV|Instagram|Twitter|Line|WhatsApp|MessengerForiOS|FB4A|FBIOS/.test(userAgent);
+      
+      // Debug logging - remove in production
+      console.log('UserAgent:', userAgent);
+      console.log('isAndroid:', isAndroid, 'isMessenger:', isMessenger, 'isInAppBrowser:', isInAppBrowser);
 
       // Handle bio links with dynamic actions
       if (path.startsWith('/bio/')) {
@@ -48,29 +54,68 @@
           // Construct deep link: brainiton://invite?code=123&message=hi
           var deepLink = deepLinkScheme + '://' + action + search;
           
+          // Emergency fallback - if we're still on this page after 3 seconds, show options
+          setTimeout(function() {
+            if (window.location.pathname.startsWith('/bio/')) {
+              showMessengerFallback(deepLink, iosAppStoreLink, androidPlayStoreLink, action);
+            }
+          }, 3000);
+          
           if (isIOS) {
-            if (isSafari) {
-              // Safari - Universal Links should work, but add fallback
-              setTimeout(function() {
-                window.location.href = iosAppStoreLink;
-              }, 2000);
-            } else if (isChrome) {
-              // Chrome on iOS - multiple approaches
-              // Try iframe method first
-              var iframe = document.createElement('iframe');
-              iframe.style.display = 'none';
-              iframe.src = deepLink;
-              document.body.appendChild(iframe);
+            if (isMessenger || isInAppBrowser) {
+              // iOS Messenger - try multiple launch methods aggressively
+              // Method 1: Direct deep link
+              window.location.href = deepLink;
               
-              // Try direct redirect after short delay
+              // Method 2: Iframe approach as backup
               setTimeout(function() {
-                window.location.href = deepLink;
+                var iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = deepLink;
+                document.body.appendChild(iframe);
               }, 100);
               
-              // Fallback to App Store
+              // Method 3: Show fallback options after short delay
               setTimeout(function() {
-                window.location.href = iosAppStoreLink;
-              }, 2500);
+                showQuickFallback(deepLink, iosAppStoreLink, androidPlayStoreLink, action);
+              }, 1500);
+            } else if (isSafari) {
+              // Safari - Check if Smart App Banner is present
+              var hasSmartBanner = document.querySelector('meta[name="apple-itunes-app"]');
+              
+              if (hasSmartBanner) {
+                // Smart App Banner is present, let user interact with it
+                // Only redirect to App Store if user hasn't interacted after longer delay
+                var bannerTimeout = setTimeout(function() {
+                  // Check if user is still on the page (didn't use banner)
+                  if (window.location.pathname.startsWith('/bio/')) {
+                    showSafariBannerFallback(deepLink, iosAppStoreLink, action);
+                  }
+                }, 5000); // Longer delay to allow banner interaction
+                
+                // Listen for page visibility changes (app launch would hide page)
+                document.addEventListener('visibilitychange', function() {
+                  if (document.hidden) {
+                    clearTimeout(bannerTimeout);
+                  }
+                });
+              } else {
+                // No Smart App Banner, try direct app launch
+                window.location.href = deepLink;
+                setTimeout(function() {
+                  window.location.href = iosAppStoreLink;
+                }, 2000);
+              }
+            }
+            } else if (isChrome) {
+              // Chrome on iOS - Fixed approach for universal links
+              // Chrome on iOS should handle Universal Links automatically
+              // The issue is that the current page is interfering with the Universal Link
+              // Instead of trying deep links, redirect to App Store immediately
+              // since Chrome already tried the Universal Link when navigating to this page
+              
+              // Show immediate fallback with option to try deep link
+              showChromeIOSFallback(deepLink, iosAppStoreLink, action);
             } else {
               // Other iOS browsers
               window.location.href = deepLink;
@@ -79,19 +124,37 @@
               }, 2000);
             }
           } else if (isAndroid) {
-            // Android - try intent URL first, then deep link
-            var intentUrl = 'intent://' + action + search + '#Intent;scheme=' + deepLinkScheme + ';package=com.orbital.brainiton;S.browser_fallback_url=' + encodeURIComponent(androidPlayStoreLink) + ';end';
-            
-            window.location.href = intentUrl;
-            
-            // Fallback for browsers that don't support intent URLs
-            setTimeout(function() {
-              window.location.href = deepLink;
-            }, 100);
-            
-            setTimeout(function() {
-              window.location.href = androidPlayStoreLink;
-            }, 2000);
+            if (isMessenger || isInAppBrowser) {
+              // Android Messenger - try multiple launch methods aggressively
+              // Method 1: Intent URL
+              var intentUrl = 'intent://' + action + search + '#Intent;scheme=' + deepLinkScheme + ';package=com.orbital.brainiton;S.browser_fallback_url=' + encodeURIComponent(androidPlayStoreLink) + ';end';
+              window.location.href = intentUrl;
+              
+              // Method 2: Direct deep link as backup
+              setTimeout(function() {
+                window.location.href = deepLink;
+              }, 200);
+              
+              // Method 3: Show quick fallback options
+              setTimeout(function() {
+                showQuickFallback(deepLink, iosAppStoreLink, androidPlayStoreLink, action);
+              }, 1500);
+            } else {
+              // Android - try intent URL first
+              var intentUrl = 'intent://' + action + search + '#Intent;scheme=' + deepLinkScheme + ';package=com.orbital.brainiton;S.browser_fallback_url=' + encodeURIComponent(androidPlayStoreLink) + ';end';
+              
+              window.location.href = intentUrl;
+              
+              // Fallback to deep link for browsers that don't support intent URLs
+              setTimeout(function() {
+                window.location.href = deepLink;
+              }, 100);
+              
+              // Final fallback to Play Store
+              setTimeout(function() {
+                window.location.href = androidPlayStoreLink;
+              }, 2000);
+            }
           } else {
             // Desktop or other platforms - show manual options
             showFallbackOptions(deepLink, iosAppStoreLink, androidPlayStoreLink);
@@ -111,6 +174,125 @@
       // Default redirect to home
       else {
         window.location.href = '/';
+      }
+
+      function showSafariBannerFallback(deepLink, iosLink, action) {
+        document.body.innerHTML = `
+          <div class="container">
+            <h1>Open Brain It On!</h1>
+            <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #007AFF;">
+              <strong>📱 Did you see the App Banner?</strong><br>
+              Safari should have shown a banner at the top with an "Open" button.
+            </div>
+            <div style="margin: 20px 0;">
+              <a href="${deepLink}" class="fallback-button" style="background: #00C851; font-size: 16px; padding: 15px 30px;">
+                🎮 Open App Now
+              </a>
+            </div>
+            <div style="margin: 20px 0;">
+              <a href="${iosLink}" class="fallback-button">
+                📱 Go to App Store
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 20px;">
+              <strong>Tip:</strong> If you have the app installed, the "Open App Now" button should work immediately.
+            </p>
+          </div>
+        `;
+      }
+
+      function showChromeIOSFallback(deepLink, iosLink, action) {
+        document.body.innerHTML = `
+          <div class="container">
+            <h1>Open Brain It On!</h1>
+            <p style="color: #666;">Chrome on iOS detected</p>
+            <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #007AFF;">
+              <strong>📱 Have the app installed?</strong><br>
+              The app should have opened automatically. If not, try the button below.
+            </div>
+            <div style="margin: 20px 0;">
+              <a href="${deepLink}" class="fallback-button" style="background: #00C851; font-size: 16px; padding: 15px 30px;">
+                🎮 Try Opening App
+              </a>
+            </div>
+            <div style="margin: 20px 0;">
+              <a href="${iosLink}" class="fallback-button">
+                📱 Download from App Store
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 20px;">
+              <strong>Pro tip:</strong> Universal Links work best when you tap them in messages, emails, or Safari.
+            </p>
+          </div>
+        `;
+      }
+
+      function showQuickFallback(deepLink, iosLink, androidLink, action) {
+        document.body.innerHTML = `
+          <div class="container">
+            <h1>Opening Brain It On!</h1>
+            <p style="color: #666;">App didn't open automatically?</p>
+            <div style="margin: 20px 0;">
+              <a href="${deepLink}" class="fallback-button" style="background: #00C851; font-size: 16px; padding: 15px 30px;">
+                🎮 Open Game
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #999;">
+              Or download: 
+              <a href="${isIOS ? iosLink : androidLink}" style="color: #007AFF;">App Store</a>
+            </p>
+          </div>
+        `;
+      }
+
+      function showMessengerFallback(deepLink, iosLink, androidLink, action) {
+        var instructions = '';
+        if (isIOS) {
+          instructions = `
+            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+              <h3>To open in the Brain It On app:</h3>
+              <ol style="margin: 10px 0; padding-left: 20px;">
+                <li>Tap the <strong>•••</strong> menu in the top right</li>
+                <li>Select <strong>"Open in Safari"</strong></li>
+                <li>The app will open automatically</li>
+              </ol>
+            </div>
+          `;
+        } else {
+          instructions = `
+            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+              <h3>To open in the Brain It On app:</h3>
+              <ol style="margin: 10px 0; padding-left: 20px;">
+                <li>Tap the <strong>•••</strong> menu</li>
+                <li>Select <strong>"Open in browser"</strong> or <strong>"Open in Chrome"</strong></li>
+                <li>The app will open automatically</li>
+              </ol>
+            </div>
+          `;
+        }
+        
+        document.body.innerHTML = `
+          <div class="container">
+            <h1>Open Brain It On!</h1>
+            <p>You're viewing this link in Messenger's browser.</p>
+            <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #007AFF;">
+              <strong>📱 Have the app installed?</strong><br>
+              Follow these steps to open it properly:
+            </div>
+            ${instructions}
+            <div style="margin: 20px 0;">
+              <a href="${deepLink}" class="fallback-button" onclick="trackAppLaunchAttempt()">Try Opening App</a>
+              <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                (This may not work in Messenger's browser)
+              </p>
+            </div>
+            <p><strong>Don't have the app? Download it:</strong></p>
+            <div>
+              <a href="${iosLink}" class="fallback-button">Download for iOS</a>
+              <a href="${androidLink}" class="fallback-button">Download for Android</a>
+            </div>
+          </div>
+        `;
       }
 
       function showFallbackOptions(deepLink, iosLink, androidLink) {
