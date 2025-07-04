@@ -110,8 +110,8 @@
 </head>
 <body>
   <div class="container" id="main-container">
-    <div class="icon">🧩</div>
-    <h1>404</h1>
+    <div class="icon"><img src="http://orbitalnine.com/img/bio-app-icon.png" alt="Brain It On! App Icon" style="width:64px;height:64px;border-radius:16px;"></div>
+    <h1>Brain It On!</h1>
     <div class="subtitle" id="subtitle">Page not found.<br>Redirecting you to Brain It On!</div>
     <div class="spinner" id="spinner"></div>
     <div id="actions" style="display:none;">
@@ -141,7 +141,8 @@
       return LANDING_PAGE;
     }
     function getUniversalLink(path) {
-      return UNIVERSAL_LINK_BASE + path + window.location.search + window.location.hash;
+      const url= UNIVERSAL_LINK_BASE + path + window.location.search + window.location.hash;
+      return url;
     }
     function isMobile() {
       return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -165,6 +166,14 @@
 
       openAppBtn.href = universalLink;
       getAppBtn.href = storeUrl;
+
+      // Add click handler to 'Open in App' button to retry opening the app on mobile
+      openAppBtn.onclick = function(e) {
+        if (isMobile()) {
+          e.preventDefault();
+          window.location = universalLink;
+        }
+      };
 
       // Prevent redirect loop: only allow one redirect per session
       const redirectKey = 'bio_redirect_attempted_' + path;
