@@ -144,6 +144,12 @@
       const url= UNIVERSAL_LINK_BASE + path + window.location.search + window.location.hash;
       return url;
     }
+    function getDeepLink() {
+      // Build the deep link from the current universal link
+      let url = window.location.href;
+      url = url.replace(/^https:\/\/(www\.)?orbitalnine\.com\/bio\//, 'brainiton://');
+      return url;
+    }
     function isMobile() {
       return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
     }
@@ -163,15 +169,16 @@
     if (isBioLink(path)) {
       const universalLink = getUniversalLink(path);
       const storeUrl = getStoreUrl();
+      const deepLink = getDeepLink();
 
-      openAppBtn.href = universalLink;
+      openAppBtn.href = deepLink;
       getAppBtn.href = storeUrl;
 
       // Add click handler to 'Open in App' button to retry opening the app on mobile
       openAppBtn.onclick = function(e) {
         if (isMobile()) {
           e.preventDefault();
-          window.location = universalLink;
+          window.location = deepLink;
         }
       };
 
@@ -204,7 +211,7 @@
           }, 2200);
 
           // Try to open the app via universal link
-          window.location = universalLink;
+          window.location = deepLink;
 
           // Fallback to store after 2.2s if still on page
           setTimeout(function() {
