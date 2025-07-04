@@ -10,8 +10,8 @@
     :root {
       --md3-primary: #1976d2;
       --md3-on-primary: #fff;
-      --md3-surface: #e3f2fd;
-      --md3-on-surface: #0d2235;
+      --md3-surface: #0d2235;
+      --md3-on-surface: #e3f2fd;
       --md3-secondary: #1565c0;
       --md3-outline: #90caf9;
       --md3-error: #b3261e;
@@ -46,6 +46,8 @@
       font-weight: 500;
       margin: 0 0 0.5rem 0;
       letter-spacing: -1px;
+      color: var(--md3-primary);
+      text-shadow: 0 2px 8px rgba(13,34,53,0.18);
     }
     .subtitle {
       font-size: 1.1rem;
@@ -101,7 +103,11 @@
     }
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @media (max-width: 500px) {
-      .container { padding: 1.5rem 0.5rem; }
+      .container {
+        padding: 1.5rem 0.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
       h1 { font-size: 2rem; }
     }
   </style>
