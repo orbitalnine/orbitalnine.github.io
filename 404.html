@@ -162,6 +162,11 @@
     function isDesktop() {
       return !isMobile();
     }
+    // iOS Chrome deep link/store fallback fix
+    function isIOSChrome() {
+      var ua = navigator.userAgent;
+      return /CriOS/i.test(ua) && /iphone|ipad|ipod/i.test(ua);
+    }
 
     // Main logic
     const path = window.location.pathname;
@@ -172,7 +177,28 @@
     const qrSection = document.getElementById('qr-section');
     const subtitle = document.getElementById('subtitle');
 
-    if (isBioLink(path)) {
+    // --- iOS Chrome special handling ---
+    if (isIOSChrome() && isBioLink(path)) {
+      const redirectKey = 'bio_redirect_attempted_' + path;
+      const hasRedirected = sessionStorage.getItem(redirectKey);
+      const deepLink = getDeepLink();
+      if (!hasRedirected) {
+        sessionStorage.setItem(redirectKey, '1');
+        spinner.style.display = "block";
+        setTimeout(function() {
+          spinner.style.display = "none";
+          actions.style.display = "block";
+          subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
+        }, 2200);
+        // Try to open the app
+        window.location = deepLink;
+      } else {
+        spinner.style.display = "none";
+        actions.style.display = "block";
+        subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
+      }
+      // Do not return, allow rest of script to run for fallback
+    } else if (isBioLink(path)) {
       const universalLink = getUniversalLink(path);
       const storeUrl = getStoreUrl();
       const deepLink = getDeepLink();
