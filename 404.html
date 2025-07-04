@@ -166,7 +166,10 @@
       openAppBtn.href = universalLink;
       getAppBtn.href = storeUrl;
 
-      // Desktop: show QR code, no auto-redirect
+      // Prevent redirect loop: only allow one redirect per session
+      const redirectKey = 'bio_redirect_attempted_' + path;
+      const hasRedirected = sessionStorage.getItem(redirectKey);
+
       if (isDesktop()) {
         subtitle.innerHTML = "This page is for opening Brain It On! on your phone.<br>Scan the QR code below or copy the link.";
         actions.style.display = "block";
@@ -180,22 +183,30 @@
           foreground: "#6750a4"
         });
       } else {
-        // Mobile: try to open app, fallback to store
-        spinner.style.display = "block";
-        setTimeout(function() {
-          // Show fallback buttons if app not opened
+        if (!hasRedirected) {
+          // Mobile: try to open app, fallback to store
+          sessionStorage.setItem(redirectKey, '1');
+          spinner.style.display = "block";
+          setTimeout(function() {
+            // Show fallback buttons if app not opened
+            spinner.style.display = "none";
+            actions.style.display = "block";
+            subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
+          }, 2200);
+
+          // Try to open the app via universal link
+          window.location = universalLink;
+
+          // Fallback to store after 2.2s if still on page
+          setTimeout(function() {
+            window.location = storeUrl;
+          }, 2200);
+        } else {
+          // Already attempted redirect, show fallback only
           spinner.style.display = "none";
           actions.style.display = "block";
           subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
-        }, 2200);
-
-        // Try to open the app via universal link
-        window.location = universalLink;
-
-        // Fallback to store after 2.2s if still on page
-        setTimeout(function() {
-          window.location = storeUrl;
-        }, 2200);
+        }
       }
     } else {
       // Not a /bio/ link: redirect to landing page
