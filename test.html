@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Links – Brain It On!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Material Design 3 Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --md3-primary: #6750a4;
+      --md3-on-primary: #fff;
+      --md3-surface: #f5f5f5;
+      --md3-on-surface: #1c1b1f;
+      --md3-secondary: #625b71;
+      --md3-outline: #cac4d0;
+      --md3-error: #b3261e;
+      --md3-radius: 20px;
+      --md3-shadow: 0 2px 8px rgba(103,80,164,0.08);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--md3-surface);
+      color: var(--md3-on-surface);
+      font-family: 'Roboto', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 600px;
+      margin: 6vh auto 0 auto;
+      background: #fff;
+      border-radius: var(--md3-radius);
+      box-shadow: var(--md3-shadow);
+      padding: 2.5rem 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 500;
+      margin: 0 0 1.5rem 0;
+      color: var(--md3-primary);
+    }
+    .link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .link-item {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--md3-outline);
+      border-radius: var(--md3-radius);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .link-item:hover {
+      border-color: var(--md3-primary);
+      box-shadow: var(--md3-shadow);
+    }
+    .link-item a {
+      color: var(--md3-primary);
+      text-decoration: none;
+      display: block;
+      word-break: break-all;
+    }
+    .link-item a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 500px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Test Links</h1>
+    <ul class="link-list">
+      <li class="link-item">
+        <a href="https://orbitalnine.com/bio/s?message=firstlink">Bio Link 1</a>
+      </li>
+      <li class="link-item">
+        <a href="https://www.orbitalnine.com/bio/s?message=secondlink">Bio Link 2</a>
+      </li>
+      <li class="link-item">
+        <a href="https://orbitalnine.com/biowrong/s?message=thirdlink">Wrong Bio Link</a>
+      </li>
+      <li class="link-item">
+        <a href="https://orbitalnine.com/biok/index.html">Biok Link</a>
+      </li>
+      <li class="link-item">
+        <a href="brainiton://s?message=deep">Deep Link</a>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>
