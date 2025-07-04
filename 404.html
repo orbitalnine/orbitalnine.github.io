@@ -189,9 +189,9 @@
       if (!hasRedirected) {
         sessionStorage.setItem(redirectKey, '1');
         spinner.style.display = "block";
-        setTimeout(function() {
-          window.location = deepLink;
-        }, 100);
+        // Try to open the app immediately (no delay)
+        window.location = deepLink;
+        // After 2.2s, show fallback UI only (do NOT redirect to store)
         setTimeout(function() {
           spinner.style.display = "none";
           actions.style.display = "block";
@@ -202,24 +202,16 @@
         actions.style.display = "block";
         subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
       }
-      // Fix Launch Game button for iOS Safari fallback
-      openAppBtn.onclick = function(e) {
-        e.preventDefault();
-        window.location = getDeepLink();
-      };
-      return;
-    }
-    // --- iOS Chrome special handling ---
-    if (isIOSChrome() && isBioLink(path)) {
+      // Do not return, allow rest of script to run for fallback
+    } else if (isIOSChrome() && isBioLink(path)) {
       const redirectKey = 'bio_redirect_attempted_' + path;
       const hasRedirected = sessionStorage.getItem(redirectKey);
       const deepLink = getDeepLink();
       if (!hasRedirected) {
         sessionStorage.setItem(redirectKey, '1');
         spinner.style.display = "block";
-        setTimeout(function() {
-          window.location = deepLink;
-        }, 100);
+        // Try to open the app immediately (no delay)
+        window.location = deepLink;
         setTimeout(function() {
           spinner.style.display = "none";
           actions.style.display = "block";
@@ -230,23 +222,21 @@
         actions.style.display = "block";
         subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
       }
-      // Fix Launch Game button for iOS Chrome fallback
-      openAppBtn.onclick = function(e) {
-        e.preventDefault();
-        window.location = getDeepLink();
-      };
-      return;
-    }
-    // --- All other browsers/platforms ---
-    if (isBioLink(path)) {
+      // Do not return, allow rest of script to run for fallback
+    } else if (isBioLink(path)) {
       const universalLink = getUniversalLink(path);
       const storeUrl = getStoreUrl();
       const deepLink = getDeepLink();
+
       openAppBtn.href = deepLink;
       getAppBtn.href = storeUrl;
+
+      // Add click handler to 'Open in App' button to retry opening the app on mobile
       openAppBtn.onclick = function(e) {
-        e.preventDefault();
-        window.location = getDeepLink();
+        if (isMobile()) {
+          e.preventDefault();
+          window.location = getDeepLink();
+        }
       };
 
       // Prevent redirect loop: only allow one redirect per session
