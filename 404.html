@@ -167,6 +167,10 @@
       var ua = navigator.userAgent;
       return /CriOS/i.test(ua) && /iphone|ipad|ipod/i.test(ua);
     }
+    function isIOSSafari() {
+      var ua = navigator.userAgent;
+      return /iP(hone|od|ad)/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+    }
 
     // Main logic
     const path = window.location.pathname;
@@ -177,21 +181,42 @@
     const qrSection = document.getElementById('qr-section');
     const subtitle = document.getElementById('subtitle');
 
-    // --- iOS Chrome special handling ---
-    if (isIOSChrome() && isBioLink(path)) {
+    // --- iOS Safari special handling ---
+    if (isIOSSafari() && isBioLink(path)) {
       const redirectKey = 'bio_redirect_attempted_' + path;
       const hasRedirected = sessionStorage.getItem(redirectKey);
       const deepLink = getDeepLink();
       if (!hasRedirected) {
         sessionStorage.setItem(redirectKey, '1');
         spinner.style.display = "block";
+        // Try to open the app immediately (no delay)
+        window.location = deepLink;
+        // After 2.2s, show fallback UI only (do NOT redirect to store)
         setTimeout(function() {
           spinner.style.display = "none";
           actions.style.display = "block";
           subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
         }, 2200);
-        // Try to open the app
+      } else {
+        spinner.style.display = "none";
+        actions.style.display = "block";
+        subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
+      }
+      // Do not return, allow rest of script to run for fallback
+    } else if (isIOSChrome() && isBioLink(path)) {
+      const redirectKey = 'bio_redirect_attempted_' + path;
+      const hasRedirected = sessionStorage.getItem(redirectKey);
+      const deepLink = getDeepLink();
+      if (!hasRedirected) {
+        sessionStorage.setItem(redirectKey, '1');
+        spinner.style.display = "block";
+        // Try to open the app immediately (no delay)
         window.location = deepLink;
+        setTimeout(function() {
+          spinner.style.display = "none";
+          actions.style.display = "block";
+          subtitle.innerHTML = "Couldn't open the app automatically.<br>Try one of the options below:";
+        }, 2200);
       } else {
         spinner.style.display = "none";
         actions.style.display = "block";
@@ -206,12 +231,10 @@
       openAppBtn.href = deepLink;
       getAppBtn.href = storeUrl;
 
-      // Add click handler to 'Open in App' button to retry opening the app on mobile
+      // Add click handler to 'Launch Game' button to always attempt deep link on tap (for all platforms)
       openAppBtn.onclick = function(e) {
-        if (isMobile()) {
-          e.preventDefault();
-          window.location = deepLink;
-        }
+        e.preventDefault();
+        window.location = getDeepLink();
       };
 
       // Prevent redirect loop: only allow one redirect per session
