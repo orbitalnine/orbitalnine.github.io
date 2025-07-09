@@ -20,7 +20,7 @@ const copyBtn = document.getElementById('copy-btn');
 const copyMsg = document.getElementById('copy-msg');
 
 // --- TESTING ---
-const isTesting = true; // disable redirect
+const isTesting = false; // disable redirect
 
 // --- HELPER FUNCTIONS ---
 function isBioLink(path) {
