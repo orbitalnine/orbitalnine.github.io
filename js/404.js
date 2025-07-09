@@ -153,7 +153,7 @@ function handlePageLogic() {
             value: universalLink,
             size: 160,
             background: "#fff",
-            foreground: "#6750a4"
+            foreground: "#000"
         });
         return;
     }
