@@ -1,0 +1,104 @@
+
+:root {
+  --md3-primary: #1976d2;
+  --md3-on-primary: #fff;
+  --md3-surface: #0d2235;
+  --md3-on-surface: #e3f2fd;
+  --md3-secondary: #1565c0;
+  --md3-outline: #90caf9;
+  --md3-error: #b3261e;
+  --md3-radius: 20px;
+  --md3-shadow: 0 2px 8px rgba(25,118,210,0.08);
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--md3-surface);
+  color: var(--md3-on-surface);
+  font-family: 'Roboto', Arial, sans-serif;
+  min-height: 100vh;
+}
+.container {
+  max-width: 400px;
+  margin: 6vh auto 0 auto;
+  background: #fff;
+  border-radius: var(--md3-radius);
+  box-shadow: var(--md3-shadow);
+  padding: 2.5rem 2rem 2rem 2rem;
+  text-align: center;
+}
+.icon {
+  font-size: 4rem;
+  color: var(--md3-primary);
+  margin-bottom: 1rem;
+}
+h1 {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -1px;
+  color: var(--md3-primary);
+  text-shadow: 0 2px 8px rgba(13,34,53,0.18);
+}
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--md3-secondary);
+  margin-bottom: 2rem;
+}
+.md3-btn {
+  display: inline-block;
+  min-width: 180px;
+  margin: 0.5rem 0;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--md3-radius);
+  background: var(--md3-primary);
+  color: var(--md3-on-primary);
+  box-shadow: var(--md3-shadow);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+.md3-btn.secondary {
+  background: #fff;
+  color: var(--md3-primary);
+  border: 2px solid var(--md3-outline);
+  box-shadow: none;
+}
+.md3-btn:active {
+  background: #115293;
+}
+.qr-section {
+  margin: 2rem 0 0 0;
+  display: none;
+}
+.qr-section.visible {
+  display: block;
+}
+.qr-label {
+  color: var(--md3-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+.spinner {
+  margin: 2rem auto 1rem auto;
+  border: 4px solid #eee;
+  border-top: 4px solid var(--md3-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@media (max-width: 500px) {
+  .container {
+    padding: 1.5rem 0.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  h1 { font-size: 2rem; }
+}
