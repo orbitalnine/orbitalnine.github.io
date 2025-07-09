@@ -15,6 +15,9 @@ const getAppBtn = document.getElementById('get-app-btn');
 const qrSection = document.getElementById('qr-section');
 const subtitle = document.getElementById('subtitle');
 
+// --- TESTING ---
+const isTesting = false; // disable redirect
+
 // --- HELPER FUNCTIONS ---
 function isBioLink(path) {
   return /^\/bio\//.test(path);
@@ -63,7 +66,7 @@ function showFallbackUI() {
 function handlePageLogic() {
     const path = window.location.pathname;
 
-    if (!isBioLink(path)) {
+    if (!isTesting &&!isBioLink(path)) {
         window.location.href = LANDING_PAGE;
         return;
     }
@@ -85,6 +88,7 @@ function handlePageLogic() {
     };
 
     if (isDesktop()) {
+        openAppBtn.style.display = 'none';
         subtitle.innerHTML = "This page is for opening Brain It On! on your phone.<br>Scan the QR code below or copy the link.";
         actions.style.display = "block";
         qrSection.classList.add("visible");
