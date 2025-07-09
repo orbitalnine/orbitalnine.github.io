@@ -147,6 +147,7 @@ function handlePageLogic() {
         openAppBtn.style.display = 'none';
         subtitle.innerHTML = "This page is for opening Brain It On! on your phone.<br>Scan the QR code below or copy the link.";
         actions.style.display = "block";
+        getAppBtn.classList.remove('secondary');
         qrSection.classList.add("visible");
         new QRious({
             element: document.getElementById('qr-code'),

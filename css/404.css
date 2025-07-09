@@ -60,6 +60,15 @@ h1 {
   transition: background 0.2s, box-shadow 0.2s;
   text-decoration: none;
 }
+
+@media (min-width: 501px) {
+  #get-app-btn {
+    margin-top: 0;
+  }
+  #actions br {
+    display: none;
+  }
+}
 .md3-btn.secondary {
   background: #fff;
   color: var(--md3-primary);
@@ -148,4 +157,20 @@ h1 {
 
 .flash-animation {
   animation: flash 0.5s ease-in-out;
+}
+
+.copyright-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--md3-on-surface);
+  padding: 1rem;
+}
+
+.copyright-footer a {
+  color: var(--md3-on-surface);
+  text-decoration: none;
+}
+
+.copyright-footer a:hover {
+  text-decoration: underline;
 }
