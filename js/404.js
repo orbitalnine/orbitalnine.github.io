@@ -167,18 +167,8 @@ function handlePageLogic() {
     sessionStorage.setItem(redirectKey, '1');
     spinner.style.display = "block";
 
-    // Special handling for iOS Safari & Chrome, which don't reliably redirect to the store.
-    if (isIOSSafari() || isIOSChrome()) {
-        window.location.href = deepLink;
-        setTimeout(showFallbackUI, REDIRECT_TIMEOUT);
-    } else { // Other mobile browsers
-        // Try to open the app via deep link.
-        window.location.href = deepLink;
-        setTimeout(showFallbackUI, REDIRECT_TIMEOUT);
-        setTimeout(function() {
-            window.location.href = storeUrl;
-        }, REDIRECT_TIMEOUT);
-    }
+    window.location.href = deepLink;
+    setTimeout(showFallbackUI, REDIRECT_TIMEOUT);
 }
 
 handlePageLogic();
