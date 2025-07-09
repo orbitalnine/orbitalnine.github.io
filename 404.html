@@ -7,6 +7,7 @@
   <!-- Material Design 3 Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/404.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <!-- QRCode.js for QR code generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
@@ -23,6 +24,12 @@
     <div class="qr-section" id="qr-section">
       <div class="qr-label">Scan to open on your phone:</div>
       <canvas id="qr-code"></canvas>
+    </div>
+    <div id="path-container" class="path-container" style="display: none;">
+      <div class="link-wrapper">
+        <div id="path-display" class="path-display"></div>
+        <button id="copy-btn" class="copy-btn"><i class="fa-solid fa-copy"></i></button>
+      </div>
     </div>
   </div>
   <script src="js/404.js"></script>
