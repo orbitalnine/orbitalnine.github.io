@@ -145,7 +145,7 @@ function handlePageLogic() {
 
     if (isDesktop()) {
         openAppBtn.style.display = 'none';
-        subtitle.innerHTML = "This page is for opening Brain It On! on your phone.<br>Scan the QR code below or copy the link.";
+        subtitle.innerHTML = "This page is for opening the game on your phone.<br>Scan the QR code below or copy the link.";
         actions.style.display = "block";
         getAppBtn.classList.remove('secondary');
         qrSection.classList.add("visible");
