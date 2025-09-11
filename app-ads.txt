@@ -2,6 +2,9 @@ google.com, pub-2337861023986611, DIRECT, f08c47fec0942fa0
 unity.com, 1003502, DIRECT, 96cabb5fbdde37a7
 ironsrc.com, 131036, Direct
 
+#facebook
+facebook.com, 367779040334377, DIRECT, c3e20eee3f780d68
+
 #ironsource
 rubiconproject.com, 24400, RESELLER, 0bfd66d529a55807
 video.unrulymedia.com, 2464975885, RESELLER
