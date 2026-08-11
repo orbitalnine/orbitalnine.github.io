@@ -6,7 +6,34 @@
   <title>Lander sign-in</title>
 </head>
 <body>
-  <h1>Discord sign-in complete</h1>
-  <p>You can return to Lander.</p>
+  <h1>Finishing Discord sign-in…</h1>
+  <p id="message">Returning you to Lander.</p>
+
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const state = params.get("state");
+      const message = document.getElementById("message");
+
+      if (!code || !state) {
+        message.textContent = "Missing sign-in details. Return to Lander and try again.";
+        return;
+      }
+
+      const response = await fetch(
+        "https://YOUR_PROJECT_REF.supabase.co/functions/v1/lander-oauth-handoff",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "complete", code, state })
+        }
+      );
+
+      message.textContent = response.ok
+        ? "Discord sign-in complete. Return to Lander."
+        : "This sign-in request expired. Return to Lander and try again.";
+    })();
+  </script>
 </body>
 </html>
