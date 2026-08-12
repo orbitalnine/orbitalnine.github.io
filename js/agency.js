@@ -8,7 +8,9 @@
 function scrollToTarget(target) {
     var startY = window.pageYOffset || document.documentElement.scrollTop;
     var targetY = startY + target.getBoundingClientRect().top;
-    var duration = 1000;
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // Safari renders this animation at roughly twice the perceived speed.
+    var duration = isSafari ? 2000 : 1000;
     var startTime;
 
     function easeInOutCubic(progress) {
