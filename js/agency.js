@@ -4,14 +4,25 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
-// jQuery for page scrolling feature - requires jQuery Easing plugin
-$(function() {
-    $('a.page-scroll').bind('click', function(event) {
-        var $anchor = $(this);
-        $('html, body').stop().animate({
-            scrollTop: $($anchor.attr('href')).offset().top
-        }, 1500, 'easeInOutExpo');
+// Native smooth scrolling for in-page navigation.
+document.querySelectorAll('a.page-scroll').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+        var selector = link.getAttribute('href');
+
+        if (!selector || selector.charAt(0) !== '#') {
+            return;
+        }
+
+        var target = document.querySelector(selector);
+        if (!target) {
+            return;
+        }
+
         event.preventDefault();
+        target.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: 'start'
+        });
     });
 });
 
