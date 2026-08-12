@@ -4,7 +4,33 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
-// Native smooth scrolling for in-page navigation.
+// Dependency-free smooth scrolling for in-page navigation.
+function scrollToTarget(target) {
+    var startY = window.pageYOffset || document.documentElement.scrollTop;
+    var targetY = startY + target.getBoundingClientRect().top;
+    var duration = 1000;
+    var startTime;
+
+    function easeInOutCubic(progress) {
+        return progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    }
+
+    function animate(timestamp) {
+        startTime = startTime || timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+
+        window.scrollTo(0, startY + (targetY - startY) * easeInOutCubic(progress));
+
+        if (progress < 1) {
+            window.requestAnimationFrame(animate);
+        }
+    }
+
+    window.requestAnimationFrame(animate);
+}
+
 document.querySelectorAll('a.page-scroll').forEach(function (link) {
     link.addEventListener('click', function (event) {
         var selector = link.getAttribute('href');
@@ -19,10 +45,7 @@ document.querySelectorAll('a.page-scroll').forEach(function (link) {
         }
 
         event.preventDefault();
-        target.scrollIntoView({
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-            block: 'start'
-        });
+        scrollToTarget(target);
     });
 });
 
