@@ -54,25 +54,29 @@
         const code = parameters.get("code");
         const handoffState = parameters.get("handoff_state");
         const authError = parameters.get("error");
+        const authErrorCode = parameters.get("error_code") || authError;
         const authErrorDescription = parameters.get("error_description");
 
         async function completeHandoff() {
-            if (authError) {
-                throw new Error(authErrorDescription || authError);
+            if (!handoffState || (!code && !authErrorCode)) {
+                throw new Error("The sign-in response was incomplete. Return to Lander and try again.");
             }
 
-            if (!code || !handoffState) {
-                throw new Error("The sign-in response was incomplete. Return to Lander and try again.");
+            const body = {
+                action: "complete",
+                state: handoffState
+            };
+            if (code) {
+                body.code = code;
+            } else {
+                body.error_code = authErrorCode;
+                body.error_description = authErrorDescription || authErrorCode;
             }
 
             const response = await fetch(functionUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "complete",
-                    code,
-                    state: handoffState
-                })
+                body: JSON.stringify(body)
             });
 
             if (!response.ok) {
@@ -80,7 +84,9 @@
                 throw new Error(body.error || "Could not complete the Lander sign-in request.");
             }
 
-            title.textContent = "Discord sign-in complete";
+            title.textContent = authErrorCode
+                ? "Returning to Lander"
+                : "Discord sign-in complete";
             message.textContent = "Return to Lander. The game will finish signing you in automatically.";
         }
 
